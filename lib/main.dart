@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:firebase_core/firebase_core.dart';
+// import 'package:firebase_core/firebase_core.dart';
 
 import 'helpers/ad_helper.dart';
 import 'helpers/config.dart';
@@ -17,15 +17,15 @@ Future<void> main() async {
   //enter full-screen
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
 
-  //firebase initialization
-  await Firebase.initializeApp();
-
-  //initializing remote config
-  await Config.initConfig();
+  // //firebase initialization
+  // await Firebase.initializeApp();
+  //
+  // //initializing remote config
+  // await Config.initConfig();
 
   await Pref.initializeHive();
 
-  await AdHelper.initAds();
+  // await AdHelper.initAds();
 
   //for setting orientation to portrait only
   SystemChrome.setPreferredOrientations(

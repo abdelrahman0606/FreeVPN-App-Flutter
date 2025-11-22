@@ -17,7 +17,7 @@ class HomeController extends GetxController {
 
   void connectToVpn() async {
     if (vpn.value.openVPNConfigDataBase64.isEmpty) {
-      MyDialogs.info(msg: 'Select a Location by clicking \'Change Location\'');
+      print('Select a Location by clicking \'Change Location\'');
       return;
     }
 
@@ -31,13 +31,13 @@ class HomeController extends GetxController {
           username: 'vpn',
           password: 'vpn',
           config: config);
-
+      print("vpen =========================>>> ${vpnConfig}");
       // log('\nAfter: $config');
-
+      await VpnEngine.startVpn(vpnConfig);
       //code to show interstitial ad and then connect to vpn
-      AdHelper.showInterstitialAd(onComplete: () async {
-        await VpnEngine.startVpn(vpnConfig);
-      });
+      // AdHelper.showInterstitialAd(onComplete: () async {
+      //   await VpnEngine.startVpn(vpnConfig);
+      // });
     } else {
       await VpnEngine.stopVpn();
     }

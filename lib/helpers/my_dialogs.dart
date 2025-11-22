@@ -3,11 +3,11 @@ import 'package:get/get.dart';
 
 class MyDialogs {
   static success({required String msg}) {
-    Get.snackbar('Success', msg,
-        colorText: Colors.white, backgroundColor: Colors.green.withOpacity(.9));
+    print('Success');
   }
 
   static error({required String msg}) {
+    throw Exception(msg);
     Get.snackbar('Error', msg,
         colorText: Colors.white,
         backgroundColor: Colors.redAccent.withOpacity(.9));

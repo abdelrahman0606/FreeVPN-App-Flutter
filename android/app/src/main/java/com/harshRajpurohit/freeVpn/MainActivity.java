@@ -66,9 +66,9 @@ public class MainActivity extends FlutterActivity {
 
     @Override
     public void finish() {
-        vpnControlEvent.setStreamHandler(null);
-        vpnControlMethod.setMethodCallHandler(null);
-        vpnStatusEvent.setStreamHandler(null);
+        if (vpnControlEvent != null) vpnControlEvent.setStreamHandler(null);
+        if (vpnControlMethod != null) vpnControlMethod.setMethodCallHandler(null);
+        if (vpnStatusEvent != null) vpnStatusEvent.setStreamHandler(null);
         super.finish();
     }
 
@@ -134,7 +134,9 @@ public class MainActivity extends FlutterActivity {
 
             @Override
             public void onCancel(Object arguments) {
-                vpnStageSink.endOfStream();
+                if (vpnStageSink != null) {
+                    vpnStageSink.endOfStream();
+                }
             }
         });
 
@@ -255,7 +257,7 @@ public class MainActivity extends FlutterActivity {
     }
 
     private void updateVPNStatus() {
-        if (attached) vpnStatusSink.success(localJson.toString());
+        if (attached && vpnStatusSink != null && localJson != null) vpnStatusSink.success(localJson.toString());
     }
 
 
@@ -281,34 +283,37 @@ public class MainActivity extends FlutterActivity {
 
 
     private void setStage(String stage) {
+        if (vpnStageSink == null || !attached) return;
+        
         switch (stage.toUpperCase()) {
             case "CONNECTED":
-                if (vpnStageSink != null && attached) vpnStageSink.success("connected");
+                vpnStageSink.success("connected");
                 break;
             case "DISCONNECTED":
-                if (vpnStageSink != null && attached) vpnStageSink.success("disconnected");
+                vpnStageSink.success("disconnected");
                 break;
             case "WAIT":
-                if (vpnStageSink != null && attached) vpnStageSink.success("wait_connection");
+                vpnStageSink.success("wait_connection");
                 break;
             case "AUTH":
-                if (vpnStageSink != null && attached) vpnStageSink.success("authenticating");
+                vpnStageSink.success("authenticating");
                 break;
             case "RECONNECTING":
-                if (vpnStageSink != null && attached) vpnStageSink.success("reconnect");
+                vpnStageSink.success("reconnect");
                 break;
             case "NONETWORK":
-                if (vpnStageSink != null && attached) vpnStageSink.success("no_connection");
+                vpnStageSink.success("no_connection");
                 break;
             case "CONNECTING":
-                if (vpnStageSink != null && attached) vpnStageSink.success("connecting");
+                vpnStageSink.success("connecting");
                 break;
             case "PREPARE":
-                if (vpnStageSink != null && attached) vpnStageSink.success("prepare");
+                vpnStageSink.success("prepare");
                 break;
             case "DENIED":
-                if (vpnStageSink != null && attached) vpnStageSink.success("denied");
+                vpnStageSink.success("denied");
                 break;
         }
     }
 }
+

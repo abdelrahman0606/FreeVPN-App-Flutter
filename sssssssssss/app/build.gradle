@@ -36,7 +36,7 @@ android {
 
     defaultConfig {
         applicationId "com.harshRajpurohit.freeVpn"
-        minSdkVersion 21
+        minSdkVersion flutter.minSdkVersion
         targetSdkVersion 33
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName

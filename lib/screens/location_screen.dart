@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
+// import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:lottie/lottie.dart';
 
 import '../controllers/location_controller.dart';
@@ -10,17 +10,29 @@ import '../helpers/ad_helper.dart';
 import '../main.dart';
 import '../widgets/vpn_card.dart';
 
-class LocationScreen extends StatelessWidget {
+class LocationScreen extends StatefulWidget {
   LocationScreen({super.key});
 
+  @override
+  State<LocationScreen> createState() => _LocationScreenState();
+}
+
+
+
+class _LocationScreenState extends State<LocationScreen> {
   final _controller = LocationController();
-  final _adController = NativeAdController();
+
+  // final _adController = NativeAdController();
 
   @override
-  Widget build(BuildContext context) {
+  void initState() {
     if (_controller.vpnList.isEmpty) _controller.getVpnData();
+    super.initState();
+  }
+  @override
+  Widget build(BuildContext context) {
 
-    _adController.ad = AdHelper.loadNativeAd(adController: _adController);
+    // _adController.ad = AdHelper.loadNativeAd(adController: _adController);
 
     return Obx(
       () => Scaffold(
@@ -29,13 +41,13 @@ class LocationScreen extends StatelessWidget {
           title: Text('VPN Locations (${_controller.vpnList.length})'),
         ),
 
-        bottomNavigationBar:
-            // Config.hideAds ? null:
-            _adController.ad != null && _adController.adLoaded.isTrue
-                ? SafeArea(
-                    child: SizedBox(
-                        height: 85, child: AdWidget(ad: _adController.ad!)))
-                : null,
+        // bottomNavigationBar:
+        //     // Config.hideAds ? null:
+        //     _adController.ad != null && _adController.adLoaded.isTrue
+        //         ? SafeArea(
+        //             child: SizedBox(
+        //                 height: 85, child: AdWidget(ad: _adController.ad!)))
+        //         : null,
 
         //refresh button
         floatingActionButton: Padding(

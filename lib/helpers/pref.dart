@@ -31,4 +31,8 @@ class Pref {
   }
 
   static set vpnList(List<Vpn> v) => _box.put('vpnList', jsonEncode(v));
+
+  //for storing custom VPN API endpoint (proxy/mirror URL)
+  static String get customVpnEndpoint => _box.get('customVpnEndpoint') ?? '';
+  static set customVpnEndpoint(String v) => _box.put('customVpnEndpoint', v);
 }

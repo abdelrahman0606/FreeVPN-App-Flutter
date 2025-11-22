@@ -27,6 +27,7 @@ class VpnCard extends StatelessWidget {
           onTap: () {
             controller.vpn.value = vpn;
             Pref.vpn = vpn;
+
             Get.back();
 
             // MyDialogs.success(msg: 'Connecting VPN Location...');

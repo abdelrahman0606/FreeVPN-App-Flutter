@@ -21,8 +21,8 @@ class _SplashScreenState extends State<SplashScreen> {
       //exit full-screen
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
-      AdHelper.precacheInterstitialAd();
-      AdHelper.precacheNativeAd();
+      // AdHelper.precacheInterstitialAd();
+      // AdHelper.precacheNativeAd();
 
       //navigate to home
       Get.off(() => HomeScreen());
