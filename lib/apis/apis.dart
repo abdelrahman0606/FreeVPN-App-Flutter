@@ -44,7 +44,7 @@ class APIs {
         }
         vpnList.add(Vpn.fromJson(tempJson));
       }
-      print("==vpnList======${vpnList.length}==============");
+      print("==vpnList======${vpnList[0].toJson()}==============");
     } catch (e) {
       MyDialogs.error(msg: e.toString());
       log('\ngetVPNServersE: $e');
@@ -55,6 +55,9 @@ class APIs {
 
     return vpnList;
   }
+
+
+
   static Future<List<Vpn>> getVPNServers2() async {
     final List<Vpn> vpnList = [];
     print("==start====================");
@@ -74,13 +77,11 @@ class APIs {
         }
         vpnList.add(Vpn.fromJson(tempJson));
       }
-      print("==vpnList======${vpnList.length}==============");
     } catch (e) {
       MyDialogs.error(msg: e.toString());
       log('\ngetVPNServersE: $e');
     }
     vpnList.shuffle();
-
     if (vpnList.isNotEmpty) Pref.vpnList = vpnList;
 
     return vpnList;

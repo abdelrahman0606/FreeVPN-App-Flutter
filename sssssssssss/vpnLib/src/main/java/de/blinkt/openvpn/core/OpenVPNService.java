@@ -362,7 +362,7 @@ public class OpenVPNService extends VpnService implements StateListener, Callbac
             mNotificationManager.notify(notificationId, notification);
 
             // For Android 14+ (API 34+), use startForeground with foreground service type
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            if (Build.VERSION.SDK_INT >= 34) { // Android 14 (UPSIDE_DOWN_CAKE)
                 startForeground(notificationId, notification, android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE);
             } else {
                 startForeground(notificationId, notification);
