@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
@@ -15,7 +16,6 @@ class APIs {
     final List<Vpn> vpnList = [];
     print("==start====================");
     try {
-
       var headers = {
         'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind6enh5dHZjY3R2YmZzZHNqcHhzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA0MzA1MDYsImV4cCI6MjA3NjAwNjUwNn0.r5MDQiz61rQSL9tUCT5xgq3rJGSApGVQy00e7j8s57A',
         'Content-Type': 'application/json'
@@ -26,29 +26,66 @@ class APIs {
       });
       request.headers.addAll(headers);
 
-      http.StreamedResponse response = await request.send();
+      http.StreamedResponse response = await request.send().timeout(
+        Duration(seconds: 30),
+        onTimeout: () {
+          throw TimeoutException('Server request timeout. Please check your internet connection.');
+        },
+      );
 
-     final body =await response.stream.bytesToString();
+      final body = await response.stream.bytesToString().timeout(
+        Duration(seconds: 10),
+        onTimeout: () {
+          throw TimeoutException('Reading response timeout.');
+        },
+      );
 
-      final csvString = json.decode(body)['csvString'];
+      if (response.statusCode != 200) {
+        throw Exception('Server returned status code: ${response.statusCode}');
+      }
+
+      final jsonData = json.decode(body);
+      if (jsonData['csvString'] == null) {
+        throw Exception('Invalid response format from server');
+      }
+
+      final csvString = jsonData['csvString'];
 
       List<List<dynamic>> list = const CsvToListConverter().convert(csvString);
+
+      if (list.isEmpty || list.length < 2) {
+        throw Exception('No VPN servers found in response');
+      }
 
       final header = list[0];
 
       for (int i = 1; i < list.length - 1; ++i) {
-        Map<String, dynamic> tempJson = {};
+        try {
+          Map<String, dynamic> tempJson = {};
 
-        for (int j = 0; j < header.length; ++j) {
-          tempJson.addAll({header[j].toString(): list[i][j]});
+          for (int j = 0; j < header.length; ++j) {
+            tempJson.addAll({header[j].toString(): list[i][j]});
+          }
+          vpnList.add(Vpn.fromJson(tempJson));
+        } catch (e) {
+          log('Error parsing VPN entry $i: $e');
+          // Continue with next entry
         }
-        vpnList.add(Vpn.fromJson(tempJson));
       }
-      print("==vpnList======${vpnList[0].toJson()}==============");
+      
+      if (vpnList.isNotEmpty) {
+        print("==vpnList======${vpnList.length} servers loaded==============");
+      } else {
+        throw Exception('No valid VPN servers found');
+      }
+    } on TimeoutException catch (e) {
+      MyDialogs.error(msg: 'Connection timeout: ${e.message}');
+      log('\ngetVPNServersE: Timeout - $e');
     } catch (e) {
-      MyDialogs.error(msg: e.toString());
+      MyDialogs.error(msg: 'Failed to load VPN servers: ${e.toString()}');
       log('\ngetVPNServersE: $e');
     }
+    
     vpnList.shuffle();
 
     if (vpnList.isNotEmpty) Pref.vpnList = vpnList;
@@ -89,13 +126,26 @@ class APIs {
 
   static Future<void> getIPDetails({required Rx<IPDetails> ipData}) async {
     try {
-      final res = await http.get(Uri.parse('http://ip-api.com/json/'));
+      final res = await http.get(Uri.parse('http://ip-api.com/json/')).timeout(
+        Duration(seconds: 15),
+        onTimeout: () {
+          throw TimeoutException('IP details request timeout');
+        },
+      );
+      
+      if (res.statusCode != 200) {
+        throw Exception('Server returned status code: ${res.statusCode}');
+      }
+      
       final data = jsonDecode(res.body);
       log(data.toString());
       ipData.value = IPDetails.fromJson(data);
+    } on TimeoutException catch (e) {
+      log('\ngetIPDetailsE: Timeout - $e');
+      // Don't show error for IP details, it's not critical
     } catch (e) {
-      MyDialogs.error(msg: e.toString());
       log('\ngetIPDetailsE: $e');
+      // Don't show error for IP details, it's not critical
     }
   }
 }

@@ -16,6 +16,7 @@ import '../widgets/home_card.dart';
 import '../widgets/watch_ad_dialog.dart';
 import 'location_screen.dart';
 import 'network_test_screen.dart';
+import 'about_us_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
@@ -33,7 +34,7 @@ class HomeScreen extends StatelessWidget {
       //app bar
       appBar: AppBar(
         leading: Icon(CupertinoIcons.home),
-        title: Text('Free OpenVPN'),
+        title: Text('VPN Reline'),
         actions: [
           IconButton(
               onPressed: () {
@@ -61,11 +62,17 @@ class HomeScreen extends StatelessWidget {
                 size: 26,
               )),
           IconButton(
-              padding: EdgeInsets.only(right: 8),
               onPressed: () => Get.to(() => NetworkTestScreen()),
               icon: Icon(
                 CupertinoIcons.info,
                 size: 27,
+              )),
+          IconButton(
+              padding: EdgeInsets.only(right: 8),
+              onPressed: () => Get.to(() => AboutUsScreen()),
+              icon: Icon(
+                Icons.info_outline,
+                size: 26,
               )),
         ],
       ),

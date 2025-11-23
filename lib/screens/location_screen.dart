@@ -91,7 +91,6 @@ class _LocationScreenState extends State<LocationScreen> {
               'Loading VPNs... 😌',
               style: TextStyle(
                   fontSize: 18,
-                  color: Colors.black54,
                   fontWeight: FontWeight.bold),
             )
           ],

@@ -283,12 +283,43 @@ public class OpenVPNService extends VpnService implements StateListener, Callbac
 
     @RequiresApi(Build.VERSION_CODES.O)
     private String createNotificationChannel(String channelId) {
-        NotificationChannel chan = new NotificationChannel(channelId,
-                getString(R.string.channel_name_background), NotificationManager.IMPORTANCE_NONE);
-        chan.setLightColor(Color.BLUE);
-        chan.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
         NotificationManager service = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        service.createNotificationChannel(chan);
+        
+        // Check if channel already exists
+        NotificationChannel existingChannel = service.getNotificationChannel(channelId);
+        if (existingChannel != null) {
+            // Channel exists, return it
+            return channelId;
+        }
+        
+        // Set appropriate importance level based on channel type
+        int importance;
+        String channelName;
+        
+        if (channelId.equals(NOTIFICATION_CHANNEL_BG_ID)) {
+            // Background channel - use LOW importance to show in notification bar but not make sound
+            importance = NotificationManager.IMPORTANCE_LOW;
+            channelName = getString(R.string.channel_name_background);
+        } else if (channelId.equals(NOTIFICATION_CHANNEL_USERREQ_ID)) {
+            // User request channel - use DEFAULT importance for user interactions
+            importance = NotificationManager.IMPORTANCE_DEFAULT;
+            channelName = getString(R.string.channel_name_background);
+        } else {
+            // New status channel - use LOW importance to show status updates
+            importance = NotificationManager.IMPORTANCE_LOW;
+            channelName = getString(R.string.channel_name_background);
+        }
+        
+        try {
+            NotificationChannel chan = new NotificationChannel(channelId, channelName, importance);
+            chan.setLightColor(Color.BLUE);
+            chan.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC); // Make visible on lock screen
+            chan.setShowBadge(true); // Show badge
+            service.createNotificationChannel(chan);
+        } catch (Exception e) {
+            Log.e("OpenVPNService", "Error creating notification channel: " + e.getMessage());
+        }
+        
         return channelId;
     }
 
